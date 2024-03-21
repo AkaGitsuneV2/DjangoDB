@@ -1,0 +1,16 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h1>Список новостей</h1>
+    <ul>
+        {% for post in news %}
+        <li>
+
+            <a href="{% url 'news_detail' post.pk %}">{{ post.title }}</a>
+            <br>
+            <small>{{ post.created_at|date:"d.m.Y" }}</small>
+            <br>
+            {{ post.content|slice:":20" }}...
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
