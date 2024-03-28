@@ -9,3 +9,11 @@ def censor(text, words_to_censor):
     for word in words_to_censor.split(','):
         censored_text = censored_text.replace(word.strip(), '*' * len(word.strip()))
     return censored_text
+
+
+@register.simple_tag(takes_context=True)
+def url_replace(context, **kwargs):
+    d = context['request'].GET.copy()
+    for k, v in kwargs.items():
+        d[k] = v
+    return d.urlencode()
