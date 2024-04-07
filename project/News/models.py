@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Author(models.Model):
@@ -20,6 +22,12 @@ class Author(models.Model):
         # Обновляем рейтинг автора
         self.rating = post_rating + comment_rating + comment_to_posts_rating
         self.save()
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    login = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
 
 
 class Category(models.Model):
@@ -70,3 +78,20 @@ class CommentCategory(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+
+@receiver(post_save, sender=User)
+def add_user_to_common(sender, instance, created, **kwargs):
+    if created:
+        common_group = Group.objects.get(name='common')
+        instance.groups.add(common_group)
+
+
+class AuthorRequest(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    processed = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Запрос стать автором от {self.user.username}"

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, AuthorRequest
 
 
 class PostForm(forms.ModelForm):
@@ -16,3 +16,9 @@ class PostEditForm(forms.ModelForm):
 
 class PostDeleteForm(forms.Form):
     pass
+
+
+class AuthorRequestForm(forms.ModelForm):
+    class Meta:
+        model = AuthorRequest
+        fields = ['message']
